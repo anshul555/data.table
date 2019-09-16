@@ -1,0 +1,18 @@
+bodlane <- lapply(
+  lapply(split(lctolc, lctolc$Item), function(x) graph.data.frame(x[, 2:3])), 
+  function(x) lapply(
+    V(x)[degree(x, mode = "in") == 0], 
+    function(s) all_simple_paths(x, from = s, 
+                                 to = V(x)[degree(x, mode = "out") == 0]) %>% 
+      lapply(
+        function(y) as.data.table(t(names(y))) %>% setnames(paste0("LC", seq_along(.)))
+      ) %>% 
+      rbindlist(fill = TRUE) 
+  ) %>% rbindlist(fill = TRUE)
+) %>% rbindlist(fill = TRUE, idcol = "Item")
+
+
+
+
+//Getting below error
+//R-Script execution failed with error message: Error in rbindlist(., fill = TRUE, idcol = "Item"): attempt to set index 51218/51218 in SET_STRING_ELT
